@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Chess Game</h1>
+    <div class="game-container">
+        <div class="chess-board" id="chessBoard"></div>
+        <div class="game-info">
+            <div class="turn-indicator white-turn" id="turnIndicator">White's Turn</div>
+            <div>
+                <h3>Captured by White:</h3>
+                <div class="captured-pieces" id="capturedByWhite"></div>
+            </div>
+            <div>
+                <h3>Captured by Black:</h3>
+                <div class="captured-pieces" id="capturedByBlack"></div>
+            </div>
+            <div>
+                <h3>Move History:</h3>
+                <div class="move-history" id="moveHistory"></div>
+            </div>
+            <div class="button-container">
+                <button id="resetButton">Reset Game</button>
+                <button id="undoButton">Undo Move</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="promotion-modal" id="promotionModal">
+        <div class="promotion-options" id="promotionOptions"></div>
+    </div>
+    
+    <div class="game-status" id="gameStatus">
+        <div class="status-message">
+            <h2 id="statusMessage"></h2>
+            <button id="newGameButton">New Game</button>
+        </div>
+    </div>
+
+   <script src="script.js"></script>
+       

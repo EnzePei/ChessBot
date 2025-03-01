@@ -1,0 +1,400 @@
+/* Global Resets */
+:root {
+  --white-piece-color: #d2b48c; /* Lighter tan for white pieces */
+  --black-piece-color: #3f2a1d; /* Darker brown for black pieces */
+  --white-pawn-color: #c2a181;  /* Lighter for white pawns */
+  --black-pawn-color: #2e1e15;  /* Darker for black pawns */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Keep the page from scrolling, but allow space for the title */
+html, body {
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  font-family: 'Playfair Display', serif;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* push content from the top down */
+  min-height: 100vh;
+  color: #e5d6ba;
+  padding: 15px 10px; /* Reduced padding to utilize more space */
+}
+
+/* Chess Board - Responsive size */
+.chess-board {
+  width: min(600px, calc(100vw - 360px)); /* Responsive width based on viewport */
+  height: min(600px, calc(100vw - 360px)); /* Match width to maintain square */
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  border: 12px solid #3a2618;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5),
+              inset 0 0 8px 2px rgba(210, 180, 140, 0.3);
+  margin-bottom: 20px; /* Reduced from 30px */
+  border-radius: 4px;
+  position: relative;
+}
+
+.chess-board::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  border: 1px solid rgba(210, 180, 140, 0.3);
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.square {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: min(52px, calc((100vw - 400px) / 12)); /* Responsive font size */
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.square.white {
+  background-color: #ac9672;
+}
+
+.square.black {
+  background-color: #6e4c2f;
+}
+
+/* Valid Move Highlight: dot changes based on piece color */
+.square.valid-move-white::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: white; /* White dot for white piece moves */
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.square.valid-move-black::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: var(--black-piece-color);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Selected Square Highlight */
+.square.selected {
+  outline: 3px solid rgba(210, 180, 140, 0.8);
+  outline-offset: -3px;
+  box-shadow: inset 0 0 15px rgba(210, 180, 140, 0.5);
+}
+
+/* Piece Styling */
+.square span {
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+}
+
+.white-piece {
+  color: var(--white-piece-color);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+.black-piece {
+  color: var(--black-piece-color);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+.white-pawn {
+  color: var(--white-pawn-color);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+.black-pawn {
+  color: var(--black-pawn-color);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Layout Containers - MODIFIED FOR BETTER FIT */
+.game-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1000px; /* Adjusted max-width */
+  gap: 20px; /* Reduced gap */
+  margin: 10px auto; /* Reduced margin */
+}
+
+.game-info {
+  background-color: rgba(30, 41, 59, 0.7);
+  padding: 15px; /* Reduced padding */
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25),
+              inset 0 0 8px rgba(210, 180, 140, 0.2);
+  width: 300px; /* Fixed width */
+  border: 1px solid rgba(210, 180, 140, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Reduced gap */
+  height: min(600px, calc(100vw - 360px)); /* Match chessboard height */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(210, 180, 140, 0.5) rgba(15, 23, 42, 0.6);
+}
+
+.game-info::-webkit-scrollbar {
+  width: 6px;
+}
+
+.game-info::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.game-info::-webkit-scrollbar-thumb {
+  background-color: rgba(210, 180, 140, 0.3);
+  border-radius: 3px;
+}
+
+/* Turn Indicator */
+.turn-indicator {
+  font-size: 20px; /* Reduced font size */
+  font-weight: 600;
+  text-align: center;
+  padding: 10px; /* Reduced padding */
+  border-radius: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: 'Cinzel', serif;
+}
+
+.turn-indicator.white-turn {
+  color: #f8f8f8;
+}
+
+.turn-indicator.black-turn {
+  color: #e8d0aa;
+}
+
+/* Captured Pieces */
+.captured-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px; /* Reduced padding */
+  background-color: rgba(15, 23, 42, 0.6);
+  border-radius: 6px;
+  min-height: 45px; /* Reduced height */
+  align-items: center;
+  justify-content: center;
+  font-size: 26px; /* Reduced font size */
+  border: 1px solid rgba(210, 180, 140, 0.2);
+}
+
+/* Move History */
+.move-history {
+  width: 100%;
+  max-height: 180px; /* Reduced height */
+  overflow-y: auto;
+  padding: 12px; /* Reduced padding */
+  background-color: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(210, 180, 140, 0.2);
+  border-radius: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(210, 180, 140, 0.5) rgba(15, 23, 42, 0.6);
+}
+
+.move-history::-webkit-scrollbar {
+  width: 6px;
+}
+
+.move-history::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.move-history::-webkit-scrollbar-thumb {
+  background-color: rgba(210, 180, 140, 0.3);
+  border-radius: 3px;
+}
+
+.move-history div {
+  padding: 5px 0; /* Reduced padding */
+  font-size: 15px; /* Reduced font size */
+  color: #e8d0aa;
+  border-bottom: 1px solid rgba(210, 180, 140, 0.1);
+}
+
+/* Buttons */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Reduced gap */
+  width: 100%;
+}
+
+/* Button groups */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+button {
+  padding: 8px; /* Reduced padding */
+  background: linear-gradient(145deg, #34404c, #1e293b);
+  color: #e8d0aa;
+  border: 1px solid rgba(210, 180, 140, 0.4);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px; /* Reduced font size */
+  transition: all 0.3s;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+button:hover {
+  background: linear-gradient(145deg, #3e4a57, #283548);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  border-color: rgba(210, 180, 140, 0.6);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Promotion Modal */
+.promotion-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(6px);
+}
+
+.promotion-options {
+  background: linear-gradient(145deg, #34404c, #1e293b);
+  padding: 20px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 15px;
+  border: 2px solid rgba(210, 180, 140, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  overflow-x: auto;
+  max-width: 90vw;
+}
+
+.promotion-option {
+  font-size: 48px; /* Reduced font size */
+  padding: 12px; /* Reduced padding */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  flex: 0 0 auto;
+}
+
+.promotion-option:hover {
+  transform: scale(1.15);
+  background-color: rgba(210, 180, 140, 0.2);
+  box-shadow: 0 0 20px rgba(210, 180, 140, 0.4);
+}
+
+/* Game Status Modal */
+.game-status {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(6px);
+}
+
+.status-message {
+  background: linear-gradient(145deg, #34404c, #1e293b);
+  padding: 30px; /* Reduced padding */
+  border-radius: 15px;
+  text-align: center;
+  border: 2px solid rgba(210, 180, 140, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  min-width: 350px; /* Reduced min-width */
+  max-width: 90vw; /* Added max-width */
+}
+
+.status-message h2 {
+  margin-bottom: 15px; /* Reduced margin */
+  font-size: 24px; /* Reduced font size */
+  color: #e8d0aa;
+  font-family: 'Cinzel', serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.status-message p {
+  margin-bottom: 20px; /* Reduced margin */
+  color: #e5d6ba;
+  font-size: 16px; /* Reduced font size */
+}
+
+.status-message button {
+  background: linear-gradient(145deg, #34404c, #1e293b);
+  margin-top: 8px; /* Reduced margin */
+  min-width: 160px; /* Reduced min-width */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 960px) {
+  .game-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .chess-board {
+    width: min(600px, 95vw);
+    height: min(600px, 95vw);
+    margin-bottom: 15px;
+  }
+  
+  .game-info {
+    width: min(600px, 95vw);
+    height: auto;
+    max-height: 400px;
+  }
+  
+  .square {
+    font-size: min(48px, 10vw);
+  }
+}
