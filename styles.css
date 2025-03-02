@@ -12,39 +12,57 @@
   padding: 0;
 }
 
-/* Keep the page from scrolling, but allow space for the title */
+/* Prevent the entire page from scrolling, but maintain the page height so the title is visible. */
 html, body {
   overflow: hidden;
   height: 100%;
 }
 
+/* Body styling */
 body {
   font-family: 'Playfair Display', serif;
   background: linear-gradient(135deg, #1e293b, #0f172a);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* push content from the top down */
+  justify-content: flex-start; /* Start near the top for the H1 to be visible on phones */
   min-height: 100vh;
   color: #e5d6ba;
-  padding: 15px 10px; /* Reduced padding to utilize more space */
+  padding: 15px 10px; /* Padding around edges */
 }
 
-/* Chess Board - Responsive size */
+/* Title spacing */
+h1 {
+  margin-bottom: 15px; /* Enough space so it's visible on mobile */
+}
+
+/* The container for your board + side panel */
+.game-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1000px;
+  gap: 20px;
+  margin: 10px auto;
+}
+
+/* The chess board, now responsive to smaller screens */
 .chess-board {
-  width: min(600px, calc(100vw - 360px)); /* Responsive width based on viewport */
-  height: min(600px, calc(100vw - 360px)); /* Match width to maintain square */
+  width: min(600px, calc(100vw - 360px)); /* Let it shrink if screen width < 960px */
+  height: min(600px, calc(100vw - 360px)); /* Keep square ratio */
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
   border: 12px solid #3a2618;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5),
               inset 0 0 8px 2px rgba(210, 180, 140, 0.3);
-  margin-bottom: 20px; /* Reduced from 30px */
+  margin-bottom: 20px;
   border-radius: 4px;
   position: relative;
 }
 
+/* Extra decorative border overlay */
 .chess-board::before {
   content: '';
   position: absolute;
@@ -58,12 +76,14 @@ body {
   z-index: -1;
 }
 
+/* Each chess square */
 .square {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: min(52px, calc((100vw - 400px) / 12)); /* Responsive font size */
+  /* Font size to handle piece icons. This scales better on small screens. */
+  font-size: min(52px, calc((100vw - 400px) / 12));
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -76,13 +96,13 @@ body {
   background-color: #6e4c2f;
 }
 
-/* Valid Move Highlight: dot changes based on piece color */
+/* Show a small dot for valid moves */
 .square.valid-move-white::after {
   content: "";
   position: absolute;
   width: 10px;
   height: 10px;
-  background-color: white; /* White dot for white piece moves */
+  background-color: white;
   border-radius: 50%;
   top: 50%;
   left: 50%;
@@ -101,14 +121,14 @@ body {
   transform: translate(-50%, -50%);
 }
 
-/* Selected Square Highlight */
+/* Highlight for a selected square */
 .square.selected {
   outline: 3px solid rgba(210, 180, 140, 0.8);
   outline-offset: -3px;
   box-shadow: inset 0 0 15px rgba(210, 180, 140, 0.5);
 }
 
-/* Piece Styling */
+/* Piece icons */
 .square span {
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
 }
@@ -117,7 +137,6 @@ body {
   color: var(--white-piece-color);
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
 }
-
 .black-piece {
   color: var(--black-piece-color);
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
@@ -127,35 +146,25 @@ body {
   color: var(--white-pawn-color);
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
 }
-
 .black-pawn {
   color: var(--black-pawn-color);
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
 }
 
-/* Layout Containers - MODIFIED FOR BETTER FIT */
-.game-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  width: 100%;
-  max-width: 1000px; /* Adjusted max-width */
-  gap: 20px; /* Reduced gap */
-  margin: 10px auto; /* Reduced margin */
-}
-
+/* The side panel with turn indicator, captured pieces, move history, buttons */
 .game-info {
   background-color: rgba(30, 41, 59, 0.7);
-  padding: 15px; /* Reduced padding */
+  padding: 15px;
   border-radius: 12px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25),
               inset 0 0 8px rgba(210, 180, 140, 0.2);
-  width: 300px; /* Fixed width */
+  width: 300px; /* Let's keep this fixed for consistency */
   border: 1px solid rgba(210, 180, 140, 0.2);
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Reduced gap */
-  height: min(600px, calc(100vw - 360px)); /* Match chessboard height */
+  gap: 15px;
+  /* Match the board's possible height, ensuring a uniform look. */
+  height: min(600px, calc(100vw - 360px));
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(210, 180, 140, 0.5) rgba(15, 23, 42, 0.6);
@@ -164,108 +173,93 @@ body {
 .game-info::-webkit-scrollbar {
   width: 6px;
 }
-
 .game-info::-webkit-scrollbar-track {
   background: rgba(15, 23, 42, 0.6);
 }
-
 .game-info::-webkit-scrollbar-thumb {
   background-color: rgba(210, 180, 140, 0.3);
   border-radius: 3px;
 }
 
-/* Turn Indicator */
+/* Turn indicator styling */
 .turn-indicator {
-  font-size: 20px; /* Reduced font size */
+  font-size: 20px;
   font-weight: 600;
   text-align: center;
-  padding: 10px; /* Reduced padding */
+  padding: 10px;
   border-radius: 8px;
   letter-spacing: 1px;
   text-transform: uppercase;
   font-family: 'Cinzel', serif;
 }
-
 .turn-indicator.white-turn {
   color: #f8f8f8;
 }
-
 .turn-indicator.black-turn {
   color: #e8d0aa;
 }
 
-/* Captured Pieces */
+/* Captured pieces sections */
 .captured-pieces {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  padding: 10px; /* Reduced padding */
+  padding: 10px;
   background-color: rgba(15, 23, 42, 0.6);
   border-radius: 6px;
-  min-height: 45px; /* Reduced height */
+  min-height: 45px;
   align-items: center;
   justify-content: center;
-  font-size: 26px; /* Reduced font size */
+  font-size: 26px;
   border: 1px solid rgba(210, 180, 140, 0.2);
 }
 
-/* Move History */
+/* Move history (scrollable) */
 .move-history {
   width: 100%;
-  max-height: 180px; /* Reduced height */
+  max-height: 180px;
   overflow-y: auto;
-  padding: 12px; /* Reduced padding */
+  padding: 12px;
   background-color: rgba(15, 23, 42, 0.6);
   border: 1px solid rgba(210, 180, 140, 0.2);
   border-radius: 8px;
   scrollbar-width: thin;
   scrollbar-color: rgba(210, 180, 140, 0.5) rgba(15, 23, 42, 0.6);
 }
-
 .move-history::-webkit-scrollbar {
   width: 6px;
 }
-
 .move-history::-webkit-scrollbar-track {
   background: rgba(15, 23, 42, 0.6);
 }
-
 .move-history::-webkit-scrollbar-thumb {
   background-color: rgba(210, 180, 140, 0.3);
   border-radius: 3px;
 }
-
 .move-history div {
-  padding: 5px 0; /* Reduced padding */
-  font-size: 15px; /* Reduced font size */
+  padding: 5px 0;
+  font-size: 15px;
   color: #e8d0aa;
   border-bottom: 1px solid rgba(210, 180, 140, 0.1);
 }
 
-/* Buttons */
+/* Buttons container */
 .button-container {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* Reduced gap */
-  width: 100%;
-}
-
-/* Button groups */
-.button-group {
-  display: flex;
-  justify-content: space-between;
   gap: 8px;
   width: 100%;
 }
 
+/* All buttons have uniform style */
 button {
-  padding: 8px; /* Reduced padding */
+  padding: 8px;
   background: linear-gradient(145deg, #34404c, #1e293b);
   color: #e8d0aa;
   border: 1px solid rgba(210, 180, 140, 0.4);
   border-radius: 6px;
   cursor: pointer;
-  font-size: 13px; /* Reduced font size */
+  font-size: 13px;
   transition: all 0.3s;
   font-family: 'Cinzel', serif;
   letter-spacing: 0.5px;
@@ -282,12 +276,11 @@ button:hover {
   transform: translateY(-2px);
   border-color: rgba(210, 180, 140, 0.6);
 }
-
 button:active {
   transform: translateY(0);
 }
 
-/* Promotion Modal */
+/* Promotion modal overlay */
 .promotion-modal {
   display: none;
   position: fixed;
@@ -298,7 +291,6 @@ button:active {
   z-index: 1000;
   backdrop-filter: blur(6px);
 }
-
 .promotion-options {
   background: linear-gradient(145deg, #34404c, #1e293b);
   padding: 20px;
@@ -312,24 +304,22 @@ button:active {
   overflow-x: auto;
   max-width: 90vw;
 }
-
 .promotion-option {
-  font-size: 48px; /* Reduced font size */
-  padding: 12px; /* Reduced padding */
+  font-size: 48px;
+  padding: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   background-color: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
   flex: 0 0 auto;
 }
-
 .promotion-option:hover {
   transform: scale(1.15);
   background-color: rgba(210, 180, 140, 0.2);
   box-shadow: 0 0 20px rgba(210, 180, 140, 0.4);
 }
 
-/* Game Status Modal */
+/* Game status end-of-game modal */
 .game-status {
   display: none;
   position: fixed;
@@ -340,61 +330,115 @@ button:active {
   z-index: 1000;
   backdrop-filter: blur(6px);
 }
-
 .status-message {
   background: linear-gradient(145deg, #34404c, #1e293b);
-  padding: 30px; /* Reduced padding */
+  padding: 30px;
   border-radius: 15px;
   text-align: center;
   border: 2px solid rgba(210, 180, 140, 0.5);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  min-width: 350px; /* Reduced min-width */
-  max-width: 90vw; /* Added max-width */
+  min-width: 350px;
+  max-width: 90vw;
 }
-
 .status-message h2 {
-  margin-bottom: 15px; /* Reduced margin */
-  font-size: 24px; /* Reduced font size */
+  margin-bottom: 15px;
+  font-size: 24px;
   color: #e8d0aa;
   font-family: 'Cinzel', serif;
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
-
 .status-message p {
-  margin-bottom: 20px; /* Reduced margin */
+  margin-bottom: 20px;
   color: #e5d6ba;
-  font-size: 16px; /* Reduced font size */
+  font-size: 16px;
 }
-
 .status-message button {
   background: linear-gradient(145deg, #34404c, #1e293b);
-  margin-top: 8px; /* Reduced margin */
-  min-width: 160px; /* Reduced min-width */
+  margin-top: 8px;
+  min-width: 160px;
 }
 
-/* Media query for smaller screens */
+/* Media query for smaller screens (phones, including iPhone) */
 @media (max-width: 960px) {
+
+  .chess-board {
+    width: min(600px, 95vw);
+    height: min(600px, 95vw);
+    display: grid;
+    grid-template-columns: repeat(8, minmax(10px, 1fr)); /* Prevent shrinking */
+    grid-template-rows: repeat(8, minmax(10px, 1fr)); /* Prevent shrinking */
+    min-width: 280px;
+    min-height: 280px;
+  }
+
+  /* Prevent grid squares from shrinking */
+  .square {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    flex: 0 0 auto; /* Prevent flex-based shrinking */
+  }
+
+  /* Ensure chess pieces do not overflow or resize incorrectly */
+  .square span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 1;
+  }
+
   .game-container {
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 15px; /* slightly bigger gap for clarity on phone */
   }
-  
+
   .chess-board {
     width: min(600px, 95vw);
     height: min(600px, 95vw);
     margin-bottom: 15px;
   }
-  
+
   .game-info {
     width: min(600px, 95vw);
-    height: auto;
-    max-height: 400px;
+    height: auto;       /* let it shrink for phone screens */
+    max-height: 80vh;   /* so it doesn't go too tall */
   }
-  
+
   .square {
-    font-size: min(48px, 10vw);
+    font-size: min(48px, 10vw); /* bigger piece icons on phones */
+  }
+  .game-info {
+    width: min(600px, 95vw);
+    max-height: 80vh; /* Make sure it does not take the full screen */
+    height: auto; /* Allow it to expand naturally */
+    overflow-y: auto; /* Enable scrolling */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(210, 180, 140, 0.5) rgba(15, 23, 42, 0.6);
+  }
+
+  /* Fix scrolling on Webkit (iOS, Safari, Chrome) */
+  .game-info::-webkit-scrollbar {
+    width: 6px;
+  }
+  .game-info::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+  }
+  .game-info::-webkit-scrollbar-thumb {
+    background-color: rgba(210, 180, 140, 0.3);
+    border-radius: 3px;
   }
 }
+
+@media (max-width: 960px) {
+  html, body {
+    overflow-y: auto !important; 
+    height: auto !important; 
+  }
+}
+
+
+
