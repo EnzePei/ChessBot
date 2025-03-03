@@ -313,6 +313,44 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+
+  function showPromotionOptions(pieceColor, row, col, callback) {
+    promotionOptions.innerHTML = '';
+    let options = pieceColor === 'white' ? ['q', 'r', 'b', 'n'] : ['Q', 'R', 'B', 'N'];
+    options.forEach(opt => {
+      let optionDiv = document.createElement('div');
+      optionDiv.className = 'promotion-option';
+      optionDiv.textContent = pieceMap[opt];
+      optionDiv.dataset.piece = opt;
+      optionDiv.addEventListener('click', () => {
+        promotionModal.style.display = 'none';
+        callback(opt);
+      });
+      promotionOptions.appendChild(optionDiv);
+    });
+    promotionModal.style.display = 'flex';
+  }
+
+function promotePawn(row, col, newPiece) {
+    const square = getSquare(row, col);
+    if (square) {
+        const isWhite = boardState[row][col] === 'P';
+        boardState[row][col] = isWhite ? newPiece.toUpperCase() : newPiece.toLowerCase();
+        square.innerHTML = renderPiece(boardState[row][col]);
+        square.dataset.piece = boardState[row][col];
+    }
+
+    currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+    turnIndicator.textContent = currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1) + "'s Turn";
+    updateCurrentPlayerHighlight();
+    checkGameStatus();
+
+    if ((currentPlayer === 'white' && whiteAlgorithm !== "human") ||
+        (currentPlayer === 'black' && blackAlgorithm !== "human")) {
+        setTimeout(aiMove, 200);
+    }
+}
+
   function movePiece(fromRow, fromCol, toRow, toCol) {
     const fromSquare = getSquare(fromRow, fromCol);
     const toSquare = getSquare(toRow, toCol);
